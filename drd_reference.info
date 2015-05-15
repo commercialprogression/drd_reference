@@ -1,0 +1,5 @@
+name = Drupal Remote Dashboard Reference
+description = Creates a reference between DRD and entity with drd reference field.
+core = 7.x
+dependencies[] = field
+dependencies[] = drd

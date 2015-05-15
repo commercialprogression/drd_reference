@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * Implements hook_field_schema().
+ */
+function drd_reference_field_schema($field) {
+  $columns = array(
+    'did' => array('type' => 'int', 'length' => 10),
+  );
+  $indexes = array(
+    'did' => array('did'),
+  );
+  return array(
+    'columns' => $columns,
+    'indexes' => $indexes,
+  );
+}

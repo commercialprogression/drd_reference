@@ -1,0 +1,102 @@
+<?php
+
+/**
+ * Implements hook_views_api().
+ */
+function drd_reference_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'drd_reference') . '/includes/views',
+  );
+}
+
+/**
+ * Implements hook_field_info().
+ */
+function drd_reference_field_info() {
+  return array(
+    'drd_reference_did' => array(
+      'label' => t('DRD reference'),
+      'description' => t('Provides a simple reference to a DRD install'),
+      'default_widget' => 'drd_reference_select',
+      'default_formatter' => 'drd_reference_label',
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_is_empty().
+ */
+function drd_reference_field_is_empty($item, $field) {
+  return empty($item['did']);
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function drd_reference_field_formatter_info() {
+  return array(
+    'drd_reference_label' => array(
+      'label' => t('DRD ID'),
+      'field types' => array('drd_reference_did'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function drd_reference_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  switch ($display['type']) {
+    case 'drd_reference_label':
+      foreach($items as $delta => $item) {
+        $element[$delta] = array(
+          '#markup' => $item['did'],
+        );
+      }
+
+      break;
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function drd_reference_field_widget_info() {
+  return array(
+    'drd_reference_select' => array(
+      'label' => t('Select list'),
+      'field types' => array('drd_reference_did'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_form().
+ */
+function drd_reference_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $value = isset($items[$delta]['did']) ? $items[$delta]['did'] : '';
+
+  $widget = $element;
+  $widget['#delta'] = $delta;
+
+  switch ($instance['widget']['type']) {
+    case 'drd_reference_select':
+      $options = drd_domain_load_all();
+
+      $widget += array(
+        '#type' => 'select',
+        '#options' => $options,
+        '#empty_option' => t('Select a domain'),
+        '#default_value' => $value,
+      );
+      break;
+  }
+
+  $element['did'] = $widget;
+  return $element;
+}
